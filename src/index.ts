@@ -1,4 +1,3 @@
-import * as path from 'path'
 import { GenNavsOptions, GenNavsResult } from './types'
 import { scanDirectory } from './scanner'
 import { generateNav } from './navGenerator'

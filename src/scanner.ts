@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import fg from 'fast-glob'
 import { FileTreeNode, GenNavsOptions } from './types'
 import { normalizePath, shouldInclude } from './utils'
@@ -9,15 +9,17 @@ import { buildFileInfo } from './extractor'
  * 扫描目录并构建文件树
  */
 export function scanDirectory(options: GenNavsOptions): FileTreeNode[] {
+    // 即用户指定的文档目录
     const baseDir = path.resolve(options.dir || process.cwd())
 
+    // 即工作目录
     const cwd = process.cwd()
 
     // 构建 glob 模式，只匹配 .md 文件
     const patterns = ['**/*.md']
 
     // 默认排除规则
-    const defaultExclude = ['**/node_modules/**', '**/dist/**', '**/.git/**']
+    const defaultExclude = ['**/node_modules/**', '**/.git/**']
 
     // 合并排除规则
     const excludePatterns = [
@@ -55,13 +57,19 @@ export function buildFileTree(files: string[], baseDir: string, rootDir: string 
 
     // 首先创建所有需要的目录节点
     files.forEach(file => {
+        // path.relative 计算两个路径之间的相对路径
         const relativeToBase = path.relative(baseDir, file)
+
+        // ​​path.sep 表示​​当前操作系统所使用的路径分隔符
+        // 在 Windows 上，它是 '\\'，在 Linux 和 macOS 上，它是 '/'
         const parts = relativeToBase.split(path.sep)
 
         // 为每个层级创建目录节点
         for (let i = 0; i < parts.length - 1; i++) {
             const dirPath = parts.slice(0, i + 1).join(path.sep)
             const fullDirPath = path.join(baseDir, dirPath)
+
+            // relative(rootDir, fullDirPath) 计算相对于工作目录中的相对路径
             const relativeToRoot = normalizePath(path.relative(rootDir, fullDirPath))
 
             if (!dirMap.has(dirPath)) {
