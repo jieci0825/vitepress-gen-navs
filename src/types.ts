@@ -86,23 +86,47 @@ export interface GenNavsOptions {
 }
 
 /**
+ * VitePress Nav Item - 带链接
+ */
+export interface NavItemWithLink {
+    text: string
+    link: string
+}
+
+/**
+ * VitePress Nav Item - 带子菜单
+ */
+export interface NavItemWithChildren {
+    text: string
+    items: NavItem[]
+}
+
+/**
  * VitePress Nav Item
  */
-export interface NavItem {
+export type NavItem = NavItemWithLink | NavItemWithChildren
+
+/**
+ * VitePress Sidebar Item - 带链接
+ */
+export interface SidebarItemWithLink {
     text: string
-    link?: string
-    items?: NavItem[]
+    link: string
+}
+
+/**
+ * VitePress Sidebar Item - 带子菜单
+ */
+export interface SidebarItemWithChildren {
+    text: string
+    items: SidebarItem[]
+    collapsed?: boolean
 }
 
 /**
  * VitePress Sidebar Item
  */
-export interface SidebarItem {
-    text: string
-    link?: string
-    items?: SidebarItem[]
-    collapsed?: boolean
-}
+export type SidebarItem = SidebarItemWithLink | SidebarItemWithChildren
 
 /**
  * VitePress Sidebar 配置（多路径）
