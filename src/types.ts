@@ -50,7 +50,7 @@ export interface NavSidebarConfig {
 /**
  * Sidebar 特定配置
  */
-export interface SidebarConfig extends NavSidebarConfig {
+export interface SidebarConfig extends Omit<NavSidebarConfig, 'depth'> {
     /**
      * 如果未指定，侧边栏组不可折叠
      * 如果为 `true`，则侧边栏组可折叠并且默认折叠

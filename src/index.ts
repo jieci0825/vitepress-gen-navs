@@ -60,7 +60,7 @@ export function genNavs(options: GenNavsOptions = {}): GenNavsResult {
     const nav = generateNav(fileTree, mergedOptions)
 
     // 生成 sidebar 配置，基于 nav 结构
-    const sidebar = generateSidebar(fileTree, mergedOptions)
+    const sidebar = generateSidebar(fileTree, nav, mergedOptions)
 
     return {
         nav,

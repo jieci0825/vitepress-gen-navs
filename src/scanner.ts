@@ -157,10 +157,10 @@ export function relativePathToLink(relativePath: string, isDirectory: boolean = 
         link = link.slice(0, -3)
     }
 
-    // 处理 index
-    if (link.endsWith('/index')) {
-        link = link.slice(0, -6)
-    }
+    // // 处理 index
+    // if (link.endsWith('/index')) {
+    //     link = link.slice(0, -6)
+    // }
 
     // 确保以 / 开头
     if (!link.startsWith('/')) {
