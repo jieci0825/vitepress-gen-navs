@@ -44,7 +44,7 @@ export default {
 
 结构如图所示：
 
-![PixPin_2025-10-22_17-32-20](/Users/coderjc/Documents/frontend/project/vitepress-gen-navs/README.assets/PixPin_2025-10-22_17-32-20.png)
+![PixPin_2025-10-22_17-32-20](./README.assets/PixPin_2025-10-22_17-32-20.png)
 
 ## API
 
