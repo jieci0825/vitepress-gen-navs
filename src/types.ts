@@ -176,6 +176,7 @@ export type SidebarConfig_VP = Record<string, SidebarItem[]>
 export interface GenNavsResult {
     nav: NavItem[]
     sidebar: SidebarConfig_VP
+    fileTree: FileTreeNode[]
 }
 
 /**

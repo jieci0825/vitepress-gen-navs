@@ -65,7 +65,8 @@ export function genNavs(options: GenNavsOptions = {}): GenNavsResult {
 
     return {
         nav,
-        sidebar
+        sidebar,
+        fileTree
     }
 }
 
