@@ -35,12 +35,12 @@ function generateSidebarItems(
     options: NormalizedGenNavsOptions,
     currentDepth: number
 ): SidebarItem[] {
-    const collapsed = options.collapsed
     const sidebarConfig = options.sidebar || {}
 
     const maxDepth = sidebarConfig.depth
     const onDirectory = sidebarConfig.onDirectory || options.onDirectory
     const onFile = sidebarConfig.onFile || options.onFile
+    const collapsed = sidebarConfig.collapsed
 
     const items: SidebarItem[] = []
 

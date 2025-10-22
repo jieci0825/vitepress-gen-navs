@@ -51,7 +51,11 @@ export interface NavSidebarConfig {
  * Sidebar 特定配置
  */
 export interface SidebarConfig extends NavSidebarConfig {
-    /** 分组是否默认折叠 */
+    /**
+     * 如果未指定，侧边栏组不可折叠
+     * 如果为 `true`，则侧边栏组可折叠并且默认折叠
+     * 如果为 `false`，则侧边栏组可折叠但默认展开
+     */
     collapsed?: boolean
 }
 
@@ -81,13 +85,6 @@ export interface GenNavsOptions {
 
     /** 排序规则 */
     sort?: SortType
-
-    /**
-     * 如果未指定，侧边栏组不可折叠
-     * 如果为 `true`，则侧边栏组可折叠并且默认折叠
-     * 如果为 `false`，则侧边栏组可折叠但默认展开
-     */
-    collapsed?: boolean
 }
 
 /**
@@ -117,13 +114,6 @@ export interface NormalizedGenNavsOptions {
 
     /** 排序规则 */
     sort: SortType
-
-    /**
-     * 如果未指定，侧边栏组不可折叠
-     * 如果为 `true`，则侧边栏组可折叠并且默认折叠
-     * 如果为 `false`，则侧边栏组可折叠但默认展开
-     */
-    collapsed?: boolean
 }
 
 /**
