@@ -4,11 +4,10 @@
 
 ## 特性
 
-- 🚀 自动扫描目录，生成 VitePress 配置
+- 🚀 自动扫描目录，生成 VitePress 的 nav 和 sidebar 配置
 - 📁 支持 glob 规则的包含/排除过滤
 - 🎨 自定义回调函数，灵活控制导航名称
 - 📝 智能提取标题（frontmatter > h1 > 文件名）
-- 🔢 支持排序（自然排序、数字前缀排序、自定义排序）
 - 📊 深度控制，限制目录层级
 - 🔗 自动生成链接路径
 - 📦 支持侧边栏分组和折叠
@@ -19,16 +18,23 @@
 npm install vitepress-gen-navs
 ```
 
-## 基础使用
+## 快速开始
+通常来说，只需要配置一下 dir 即可，其余的保持默认配置即可正常使用。如果有特殊的配置需求，可以翻阅后续的文档。
+
+我建议文档都放在一个目录中，便于管理，通常是 docs 或者 document。当然，此时通常你需要额外配置一下 vitepress 的 **srcDir** 配置。
 
 ```js
 import { genNavs } from 'vitepress-gen-navs'
 
 const { nav, sidebar } = genNavs({
-    dir: './docs'
+    dir: './docs',
+  	// 设置了 dir 而没有设置 vitepress 的 srcDir 配置项时，你通常需要开启 addDirPrefix
+  	// addDirPrefix: true
 })
 
 export default {
+    // https://vitepress.dev/zh/reference/site-config#srcdir
+    srcDir: "./docs", // 如果没有设置此配置，则需要开启 addDirPrefix
     themeConfig: {
         nav,
         sidebar
@@ -36,54 +42,44 @@ export default {
 }
 ```
 
+结构如图所示：
+
+![PixPin_2025-10-22_17-32-20](/Users/coderjc/Documents/frontend/project/vitepress-gen-navs/README.assets/PixPin_2025-10-22_17-32-20.png)
+
 ## API
 
-### `genNavs(options)`
+### GenNavsOptions
 
-生成 VitePress 的 nav 和 sidebar 配置。
+| 属性名 | 描述 | 类型 | 是否必填 | 默认值 |
+|--------|------|------|----------|--------|
+| `dir` | 扫描目录 | `string` | 否 | 当前目录 |
+| `addDirPrefix` | 是否需要添加扫描目录前缀 | `boolean` | 否 | `false` |
+| `include` | 全局包含规则 | `string[]` | 否 | `['**/node_modules/**', '**/.git/**']` |
+| `exclude` | 全局排除规则 | `string[]` | 否 | - |
+| `nav` | nav 特定配置 | `NavSidebarConfig` | 否 | - |
+| `sidebar` | sidebar 特定配置 | `SidebarConfig` | 否 | - |
+| `onDirectory` | 全局目录回调（nav/sidebar 未配置时的默认值）。`返回的字符串会作为最终的展示名称。` | `(info: DirInfo) => string` | 否 | - |
+| `onFile` | 全局文件回调（nav/sidebar 未配置时的默认值）。`返回的字符串会作为最终的展示名称。` | `(info: FileInfo) => string` | 否 | - |
+| `excludeRootIndex` | 是否在 nav 中排除根目录的 index.md | `boolean` | 否 | `false` |
+| `formatSortPrefix` | 是否格式化排序前缀（移除文件名中的排序前缀） | `boolean` | 否 | `true` |
 
-#### 参数
+### NavSidebarConfig 配置项（用于 nav 配置）
 
-```typescript
-interface GenNavsOptions {
-    // 扫描目录，默认当前目录
-    dir?: string
-    
-    // 全局包含规则（glob 模式）
-    include?: string | string[]
-    
-    // 全局排除规则（glob 模式）
-    exclude?: string | string[]
-    
-    // nav 特定配置
-    nav?: {
-        include?: string | string[]
-        exclude?: string | string[]
-        depth?: number
-        onDirectory?: (info: DirInfo) => string | null
-        onFile?: (info: FileInfo) => string | null
-    }
-    
-    // sidebar 特定配置
-    sidebar?: {
-        include?: string | string[]
-        exclude?: string | string[]
-        depth?: number
-        collapsed?: boolean
-        onDirectory?: (info: DirInfo) => string | null
-        onFile?: (info: FileInfo) => string | null
-    }
-    
-    // 全局回调（nav/sidebar 未配置时使用）
-    onDirectory?: (info: DirInfo) => string | null
-    onFile?: (info: FileInfo) => string | null
-    
-    // 排序规则
-    sort?: 'asc' | 'desc' | ((a: any, b: any) => number)
-}
-```
+| 属性名 | 描述 | 类型 | 是否必填 | 默认值 |
+|--------|------|------|----------|--------|
+| `depth` | 深度限制 | `number` | 否 | `2` |
+| `onDirectory` | 目录回调，优先级高于全局 | `(info: DirInfo) => string \| null` | 否 | - |
+| `onFile` | 文件回调，优先级高于全局 | `(info: FileInfo) => string \| null` | 否 | - |
 
-#### 回调参数
+### SidebarConfig 配置项（用于 sidebar 配置）
+
+| 属性名 | 描述 | 类型 | 是否必填 | 默认值 |
+|--------|------|------|----------|--------|
+| `collapsed` | 侧边栏组折叠状态。如果未指定，则不可折叠；如果为 `true`，则可折叠并且默认折叠；如果为 `false`，则可折叠但默认展开 | `boolean` | 否 | `false` |
+| `onDirectory` | 目录回调，优先级高于全局 | `(info: DirInfo) => string \| null` | 否 | - |
+| `onFile` | 文件回调，优先级高于全局 | `(info: FileInfo) => string \| null` | 否 | - |
+
+### 回调参数
 
 **DirInfo（目录信息）**
 
@@ -101,6 +97,7 @@ interface DirInfo {
 ```typescript
 interface FileInfo {
     name: string           // 文件名（不含扩展名）
+    originalName: string   // 文件名
     path: string           // 绝对路径
     relativePath: string   // 相对路径
     frontmatter?: any      // frontmatter 数据
@@ -110,16 +107,6 @@ interface FileInfo {
 ```
 
 ## 使用示例
-
-### 基础示例
-
-```js
-import { genNavs } from 'vitepress-gen-navs'
-
-const { nav, sidebar } = genNavs({
-    dir: './docs'
-})
-```
 
 ### 过滤特定目录
 
@@ -158,10 +145,7 @@ Nav 现在支持生成带下拉菜单的多层级导航结构：
 const { nav, sidebar } = genNavs({
     dir: './docs',
     nav: {
-        depth: 2  // nav 显示两层，第一层作为下拉菜单，第二层作为子项
-    },
-    sidebar: {
-        depth: 3  // sidebar 显示三层
+        depth: 2  // nav 显示两层，第一层作为下拉菜单，第二层作为子项，如果你的 nav 不需要展示子项，只需要第一级，设置为 1 即可
     }
 })
 ```
@@ -223,27 +207,39 @@ const { nav } = genNavs({
 ]
 ```
 
-### 自定义排序
+### 排除根目录的 index.md
+
+当文档根目录包含首页 `index.md` 文件时，可以通过 `excludeRootIndex` 选项控制其是否显示在 nav 配置中：
 
 ```js
+// 目录结构
+docs/
+  ├── index.md       // 首页，不需要在 nav 中显示
+  ├── guide.md
+  └── api.md
+
 const { nav, sidebar } = genNavs({
     dir: './docs',
-    sort: 'asc'  // 升序排序
+    excludeRootIndex: true  // 排除根目录的 index.md
 })
 
-// 或者自定义排序函数
-const { nav, sidebar } = genNavs({
-    dir: './docs',
-    sort: (a, b) => {
-        // 自定义排序逻辑
-        return a.name.localeCompare(b.name)
-    }
-})
+// 生成的 nav 将不包含 index.md
+[
+    { text: 'guide', link: '/guide' },
+    { text: 'api', link: '/api' }
+]
 ```
+
+**注意**：
+- 此选项仅影响 nav 配置，不影响 sidebar 配置
+- 只排除根目录（扫描目录）下的 `index.md`，子目录中的 `index.md` 不受影响
+- 默认值为 `false`，即默认会包含根目录的 `index.md`
 
 ### 数字前缀排序
 
-支持文件名以数字前缀开头的排序（如 `01-intro.md`, `02-guide.md`）：
+> **本工具内部针对 index.md 做出了特殊处理，永远排在当前列表层级的第一位**
+
+排序并没有提供特定的方法，依赖的是一种约定规范，即你在内部对你的文件夹或者文件名，标记一个序号，实现排序。（如 `01-intro.md`, `02-guide.md`）：
 
 ```
 docs/
@@ -252,19 +248,38 @@ docs/
   └── 03-advanced.md
 ```
 
+```
+默认支持的前缀格式如下：
+ * - 数字 + 标题
+ * - 数字 + . 后 + 标题
+ * - 数字 + 多个空格 + 标题
+ * - 数字 + 、后 + 标题
+ * - 数字 + -后 + 标题
+ * - 数字 + _后 + 标题
+```
+
 ```js
 const { nav, sidebar } = genNavs({
     dir: './docs',
-    sort: 'asc'  // 会按照数字前缀排序
 })
 ```
 
+默认本工具内部 `formatSortPrefix` 配置为 `true`，会格式化掉前缀，只保留**标题内容**。即 `01-intro.md` 格式化后的结果为`intro.md`。如果你希望保留前缀，将此配置改为 `false` 即可。
+
 ### 侧边栏折叠
+
+此行为与 vitepress 的 collapsed 一致。
 
 ```js
 const { nav, sidebar } = genNavs({
     dir: './docs',
     sidebar: {
+        /**
+         * 如果未指定，侧边栏组不可折叠
+         * 如果为 `true`，则侧边栏组可折叠并且默认折叠
+         * 如果为 `false`，则侧边栏组可折叠但默认展开
+         * 如果不希望有这个功能，可以直接设置 undefined
+         */
         collapsed: true  // 默认折叠所有分组
     }
 })
@@ -283,6 +298,8 @@ const { nav, sidebar } = genNavs({
         depth: 3,
         collapsed: false,
         onDirectory: (info) => {
+          	// TODO: 你的条件
+          	// 返回的结果将作为最终的展示 nav 或 sidebar 名称
             return `📁 ${info.name}`
         }
     }
@@ -291,7 +308,7 @@ const { nav, sidebar } = genNavs({
 
 ## 标题提取优先级
 
-默认情况下，标题按以下优先级提取：
+默认情况下(**即不使用 onDirectory 或 onFile 的情况**)，标题按以下优先级提取：
 
 1. **frontmatter.title** - markdown 文件的 frontmatter 中的 title 字段
 2. **第一个 h1 标题** - markdown 文件中的第一个 `# 标题`
@@ -309,54 +326,9 @@ title: 自定义标题
 内容...
 ```
 
-会使用 "自定义标题" 作为导航名称。
-
 ## 目录结构示例
 
-假设有如下目录结构：
 
-```
-docs/
-  ├── guide/
-  │   ├── index.md
-  │   ├── getting-started.md
-  │   └── configuration.md
-  ├── api/
-  │   ├── index.md
-  │   └── core.md
-  └── about.md
-```
-
-生成的配置：
-
-```js
-{
-    nav: [
-        { text: 'Guide', link: '/guide/' },
-        { text: 'API', link: '/api/' },
-        { text: 'About', link: '/about' }
-    ],
-    sidebar: {
-        '/guide/': [
-            {
-                text: 'Guide',
-                items: [
-                    { text: 'Getting Started', link: '/guide/getting-started' },
-                    { text: 'Configuration', link: '/guide/configuration' }
-                ]
-            }
-        ],
-        '/api/': [
-            {
-                text: 'API',
-                items: [
-                    { text: 'Core', link: '/api/core' }
-                ]
-            }
-        ]
-    }
-}
-```
 
 ## License
 
