@@ -15,7 +15,8 @@ const DEFAULT_OPTIONS: NormalizedGenNavsOptions = {
     sidebar: {},
     onDirectory: undefined,
     onFile: undefined,
-    sort: 'asc'
+    sort: 'asc',
+    collapsed: undefined
 }
 
 /**
@@ -56,7 +57,7 @@ export function genNavs(options: GenNavsOptions = {}): GenNavsResult {
     const nav = generateNav(fileTree, mergedOptions)
 
     // 生成 sidebar 配置，基于 nav 结构
-    const sidebar = generateSidebar(fileTree, nav, mergedOptions)
+    const sidebar = generateSidebar(fileTree, mergedOptions)
 
     return {
         nav,
