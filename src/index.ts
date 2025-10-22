@@ -15,11 +15,12 @@ const DEFAULT_OPTIONS: NormalizedGenNavsOptions = {
         depth: 1
     },
     sidebar: {
-        collapsed: undefined
+        collapsed: false
     },
     onDirectory: undefined,
     onFile: undefined,
-    sort: 'asc'
+    sort: 'asc',
+    excludeRootIndex: true
 }
 
 /**

@@ -85,6 +85,9 @@ export interface GenNavsOptions {
 
     /** 排序规则 */
     sort?: SortType
+
+    /** 是否在 nav 中排除根目录的 index.md */
+    excludeRootIndex?: boolean
 }
 
 /**
@@ -114,6 +117,9 @@ export interface NormalizedGenNavsOptions {
 
     /** 排序规则 */
     sort: SortType
+
+    /** 是否在 nav 中排除根目录的 index.md */
+    excludeRootIndex: boolean
 }
 
 /**

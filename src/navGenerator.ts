@@ -13,7 +13,7 @@ export function generateNav(tree: FileTreeNode[], options: NormalizedGenNavsOpti
     const onFile = navConfig.onFile || options.onFile
 
     // 从第一层开始递归构建
-    return buildNavItems(tree, 0, maxDepth, onDirectory, onFile, options.sort)
+    return buildNavItems(tree, 0, maxDepth, onDirectory, onFile, options.sort, options.excludeRootIndex)
 }
 
 /**
@@ -56,7 +56,8 @@ function buildNavItems(
     maxDepth: number | undefined,
     onDirectory: ((info: DirInfo) => string | null) | undefined,
     onFile: ((info: any) => string | null) | undefined,
-    sort: SortType | undefined
+    sort: SortType | undefined,
+    excludeRootIndex: boolean
 ): NavItem[] {
     // 检查深度限制
     if (maxDepth !== undefined && currentDepth >= maxDepth) {
@@ -89,7 +90,15 @@ function buildNavItems(
             // 递归处理子节点
             const childItems =
                 node.children && node.children.length > 0
-                    ? buildNavItems(node.children, currentDepth + 1, maxDepth, onDirectory, onFile, sort)
+                    ? buildNavItems(
+                          node.children,
+                          currentDepth + 1,
+                          maxDepth,
+                          onDirectory,
+                          onFile,
+                          sort,
+                          excludeRootIndex
+                      )
                     : []
 
             // 如果有子节点，使用 items 创建下拉菜单；否则使用 link
@@ -133,6 +142,11 @@ function buildNavItems(
                 })
             }
         } else if (node.type === 'file' && node.fileInfo) {
+            // 如果需要排除根目录的 index.md
+            if (excludeRootIndex && currentDepth === 0 && node.name === 'index.md') {
+                continue
+            }
+
             // 使用回调或提取标题
             let text = extractTitle(node.path)
             if (onFile) {
