@@ -4,6 +4,18 @@ import { relativePathToLink } from './scanner'
 import { removeSortPrefix } from './utils'
 
 /**
+ * 获取文本，优先使用自定义回调，否则使用默认值并根据配置格式化
+ */
+function getTextWithFormat(defaultText: string, customText: string | null, formatSortPrefix: boolean): string {
+    // 如果有自定义文本，直接使用（最高优先级，不格式化）
+    if (customText !== null) {
+        return customText
+    }
+    // 使用默认值，根据配置决定是否格式化
+    return formatSortPrefix ? removeSortPrefix(defaultText) : defaultText
+}
+
+/**
  * 生成 Sidebar 配置，基于 nav 结构
  */
 export function generateSidebar(
@@ -124,19 +136,9 @@ function generateSidebarItems(
                 depth: node.depth
             }
 
-            // 使用回调或默认名称
-            let text = node.name
-            if (onDirectory) {
-                const customText = onDirectory(dirInfo)
-                if (customText !== null) {
-                    text = customText
-                }
-            }
-
-            // 格式化排序前缀
-            if (options.formatSortPrefix) {
-                text = removeSortPrefix(text)
-            }
+            // 获取目录显示文本
+            const customText = onDirectory ? onDirectory(dirInfo) : null
+            const text = getTextWithFormat(node.name, customText, options.formatSortPrefix)
 
             // 递归处理子节点
             const childItems = node.children ? generateSidebarItems(node.children, options, currentDepth + 1) : []
@@ -151,19 +153,9 @@ function generateSidebarItems(
                 items.push(sidebarItem)
             }
         } else if (node.type === 'file' && node.fileInfo) {
-            // 使用回调或提取标题
-            let text = extractTitle(node.path)
-            if (onFile) {
-                const customText = onFile(node.fileInfo)
-                if (customText !== null) {
-                    text = customText
-                }
-            }
-
-            // 格式化排序前缀
-            if (options.formatSortPrefix) {
-                text = removeSortPrefix(text)
-            }
+            // 获取文件显示文本
+            const customText = onFile ? onFile(node.fileInfo) : null
+            const text = getTextWithFormat(extractTitle(node.path), customText, options.formatSortPrefix)
 
             // 直接使用 relativePath
             const link = relativePathToLink(node.relativePath, false)
