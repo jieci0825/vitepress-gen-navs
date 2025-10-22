@@ -1,11 +1,12 @@
 {
     "name": "vitepress-gen-navs",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "description": "用于生成 vitepress 中的 nav 和 sidebar 配置",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "README.assets"
     ],
     "scripts": {
         "build": "tsc",
