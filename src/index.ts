@@ -8,11 +8,11 @@ import { generateSidebar } from './sidebarGenerator'
  */
 const DEFAULT_OPTIONS: NormalizedGenNavsOptions = {
     dir: process.cwd(),
-    addDirPrefix: true,
+    addDirPrefix: false,
     include: [],
     exclude: ['**/node_modules/**', '**/.git/**'],
     nav: {
-        depth: 1
+        depth: 2
     },
     sidebar: {
         collapsed: false
