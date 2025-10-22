@@ -1,4 +1,4 @@
-import { FileTreeNode, NavItem, GenNavsOptions, DirInfo, SortType } from './types'
+import { FileTreeNode, NavItem, NormalizedGenNavsOptions, DirInfo, SortType } from './types'
 import { sortItems } from './utils'
 import { extractTitle } from './extractor'
 import { relativePathToLink } from './scanner'
@@ -6,7 +6,7 @@ import { relativePathToLink } from './scanner'
 /**
  * 生成 Nav 配置
  */
-export function generateNav(tree: FileTreeNode[], options: GenNavsOptions): NavItem[] {
+export function generateNav(tree: FileTreeNode[], options: NormalizedGenNavsOptions): NavItem[] {
     const navConfig = options.nav || {}
     const maxDepth = navConfig.depth
     const onDirectory = navConfig.onDirectory || options.onDirectory

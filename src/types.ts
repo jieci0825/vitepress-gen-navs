@@ -65,10 +65,12 @@ export interface SidebarConfig extends NavSidebarConfig {
 export interface GenNavsOptions {
     /** 扫描目录，默认当前目录 */
     dir?: string
+    /** 是否需要添加扫描目录前缀，默认 true */
+    addDirPrefix?: boolean
     /** 全局包含规则 */
-    include?: string | string[]
+    include?: string[]
     /** 全局排除规则 */
-    exclude?: string | string[]
+    exclude?: string[]
 
     /** nav 特定配置 */
     nav?: NavSidebarConfig
@@ -77,12 +79,41 @@ export interface GenNavsOptions {
     sidebar?: SidebarConfig
 
     /** 全局目录回调（nav/sidebar 未配置时的默认值） */
-    onDirectory?: (info: DirInfo) => string | null
+    onDirectory?: (info: DirInfo) => string
     /** 全局文件回调（nav/sidebar 未配置时的默认值） */
-    onFile?: (info: FileInfo) => string | null
+    onFile?: (info: FileInfo) => string
 
     /** 排序规则 */
     sort?: SortType
+}
+
+/**
+ * 标准化后的配置选项（内部使用）
+ * 合并默认配置后，除了回调函数，其他字段都有确定的值
+ */
+export interface NormalizedGenNavsOptions {
+    /** 扫描目录 */
+    dir: string
+    /** 是否需要添加扫描目录前缀 */
+    addDirPrefix: boolean
+    /** 全局包含规则 */
+    include: string[]
+    /** 全局排除规则 */
+    exclude: string[]
+
+    /** nav 特定配置 */
+    nav: NavSidebarConfig
+
+    /** sidebar 特定配置 */
+    sidebar: SidebarConfig
+
+    /** 全局目录回调（nav/sidebar 未配置时的默认值） */
+    onDirectory?: (info: DirInfo) => string
+    /** 全局文件回调（nav/sidebar 未配置时的默认值） */
+    onFile?: (info: FileInfo) => string
+
+    /** 排序规则 */
+    sort: SortType
 }
 
 /**

@@ -46,32 +46,22 @@ export function pathToLink(filePath: string, baseDir: string): string {
  * @param include 包含规则
  * @param exclude 排除规则
  */
-export function shouldInclude(filePath: string, include?: string | string[], exclude?: string | string[]): boolean {
+export function shouldInclude(filePath: string, include: string[], exclude: string[]): boolean {
     const normalizedPath = normalizePath(filePath)
 
     // 检查排除规则
-    if (exclude) {
-        const excludePatterns = Array.isArray(exclude) ? exclude : [exclude]
-        for (const pattern of excludePatterns) {
-            if (minimatch(normalizedPath, pattern)) {
-                return false
-            }
+    for (const pattern of exclude) {
+        if (minimatch(normalizedPath, pattern)) {
+            return false
         }
     }
 
     // 检查包含规则
-    if (include) {
-        const includePatterns = Array.isArray(include) ? include : [include]
-        for (const pattern of includePatterns) {
-            if (minimatch(normalizedPath, pattern)) {
-                return true
-            }
-        }
-        // 如果指定了包含规则但不匹配，则排除
-        return false
+    if (include.length > 0) {
+        return include.some(pattern => minimatch(normalizedPath, pattern))
     }
 
-    // 没有包含规则，默认包含
+    // 没有包含规则，则默认包含所有文件
     return true
 }
 

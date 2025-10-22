@@ -1,16 +1,16 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import fg from 'fast-glob'
-import { FileTreeNode, GenNavsOptions } from './types'
+import { FileTreeNode, NormalizedGenNavsOptions } from './types'
 import { normalizePath, shouldInclude } from './utils'
 import { buildFileInfo } from './extractor'
 
 /**
  * 扫描目录并构建文件树
  */
-export function scanDirectory(options: GenNavsOptions): FileTreeNode[] {
+export function scanDirectory(options: NormalizedGenNavsOptions): FileTreeNode[] {
     // 即用户指定的文档目录
-    const baseDir = path.resolve(options.dir || process.cwd())
+    const baseDir = path.resolve(options.dir)
 
     // 即工作目录
     const cwd = process.cwd()
@@ -18,19 +18,10 @@ export function scanDirectory(options: GenNavsOptions): FileTreeNode[] {
     // 构建 glob 模式，只匹配 .md 文件
     const patterns = ['**/*.md']
 
-    // 默认排除规则
-    const defaultExclude = ['**/node_modules/**', '**/.git/**']
-
-    // 合并排除规则
-    const excludePatterns = [
-        ...defaultExclude,
-        ...(options.exclude ? (Array.isArray(options.exclude) ? options.exclude : [options.exclude]) : [])
-    ]
-
     // 扫描文件
     const files = fg.sync(patterns, {
         cwd: baseDir,
-        ignore: excludePatterns,
+        ignore: options.exclude,
         onlyFiles: true,
         absolute: true
     })
@@ -42,7 +33,7 @@ export function scanDirectory(options: GenNavsOptions): FileTreeNode[] {
     })
 
     // 构建文件树，传入工作目录作为 relativePath 的基准
-    return buildFileTree(filteredFiles, baseDir, cwd)
+    return buildFileTree(filteredFiles, baseDir, cwd, options.addDirPrefix)
 }
 
 /**
@@ -50,8 +41,14 @@ export function scanDirectory(options: GenNavsOptions): FileTreeNode[] {
  * @param files 文件列表（绝对路径）
  * @param baseDir 扫描的基础目录（绝对路径）
  * @param rootDir relativePath 的基准目录（绝对路径），用于计算最终的相对路径
+ * @param addDirPrefix 路径是否需要添加扫描目录前缀
  */
-export function buildFileTree(files: string[], baseDir: string, rootDir: string = baseDir): FileTreeNode[] {
+export function buildFileTree(
+    files: string[],
+    baseDir: string,
+    rootDir: string = baseDir,
+    addDirPrefix: boolean = true
+): FileTreeNode[] {
     const tree: FileTreeNode[] = []
     const dirMap = new Map<string, FileTreeNode>()
 
@@ -69,8 +66,10 @@ export function buildFileTree(files: string[], baseDir: string, rootDir: string 
             const dirPath = parts.slice(0, i + 1).join(path.sep)
             const fullDirPath = path.join(baseDir, dirPath)
 
-            // relative(rootDir, fullDirPath) 计算相对于工作目录中的相对路径
-            const relativeToRoot = normalizePath(path.relative(rootDir, fullDirPath))
+            // 根据 addDirPrefix 决定相对路径的计算基准
+            // addDirPrefix=true: 相对于 rootDir (如 docs/guide)
+            // addDirPrefix=false: 相对于 baseDir (如 guide)
+            const relativeToRoot = normalizePath(path.relative(addDirPrefix ? rootDir : baseDir, fullDirPath))
 
             if (!dirMap.has(dirPath)) {
                 const dirNode: FileTreeNode = {
@@ -89,7 +88,8 @@ export function buildFileTree(files: string[], baseDir: string, rootDir: string 
     // 添加文件节点
     files.forEach(file => {
         const relativeToBase = path.relative(baseDir, file)
-        const relativeToRoot = normalizePath(path.relative(rootDir, file))
+        // 根据 addDirPrefix 决定相对路径的计算基准
+        const relativeToRoot = normalizePath(path.relative(addDirPrefix ? rootDir : baseDir, file))
         const parts = relativeToBase.split(path.sep)
         const depth = parts.length - 1
         const fileName = parts[parts.length - 1]
