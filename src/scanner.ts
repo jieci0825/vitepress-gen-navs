@@ -135,7 +135,29 @@ export function buildFileTree(
         }
     })
 
-    // TODO 排序：每一个层级的列表中，index.md 都应该在当前列表的第一个位置
+    // 排序：每一个层级的列表中，index.md 都应该在当前列表的第一个位置
+    const sortWithIndexFirst = (nodes: FileTreeNode[]): FileTreeNode[] => {
+        return nodes.sort((a, b) => {
+            // 如果 a 是 index.md，排在前面
+            if (a.type === 'file' && a.name === 'index.md') return -1
+            // 如果 b 是 index.md，排在前面
+            if (b.type === 'file' && b.name === 'index.md') return 1
+            // 其他情况保持原有顺序
+            return 0
+        })
+    }
+
+    // 递归排序所有层级
+    const sortTreeRecursively = (nodes: FileTreeNode[]) => {
+        sortWithIndexFirst(nodes)
+        nodes.forEach(node => {
+            if (node.type === 'directory' && node.children) {
+                sortTreeRecursively(node.children)
+            }
+        })
+    }
+
+    sortTreeRecursively(tree)
 
     return tree
 }
