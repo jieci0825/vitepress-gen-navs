@@ -39,11 +39,7 @@ export type SortType = 'asc' | 'desc' | ((a: any, b: any) => number)
  * Nav/Sidebar 特定配置
  */
 export interface NavSidebarConfig {
-    /** 包含规则 */
-    include?: string | string[]
-    /** 排除规则 */
-    exclude?: string | string[]
-    /** 深度限制，默认无限 */
+    /** 深度限制，默认 1 */
     depth?: number
     /** 目录回调 */
     onDirectory?: (info: DirInfo) => string | null

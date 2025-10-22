@@ -11,7 +11,9 @@ const DEFAULT_OPTIONS: NormalizedGenNavsOptions = {
     addDirPrefix: true,
     include: [],
     exclude: ['**/node_modules/**', '**/.git/**'],
-    nav: {},
+    nav: {
+        depth: 1
+    },
     sidebar: {},
     onDirectory: undefined,
     onFile: undefined,

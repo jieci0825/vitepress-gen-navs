@@ -105,16 +105,19 @@ function buildNavItems(
                 let link: string
 
                 if (isDepthLimited && node.children && node.children.length > 0) {
-                    // 已达到深度限制，查找第一个文件作为 link
-                    const firstFile = findFirstFile(node)
-                    if (firstFile) {
-                        link = relativePathToLink(firstFile.relativePath, false)
+                    // 达到深度限制，则尝试寻找 index.md 文件作为 link
+                    const indexFile = findIndexFile(node)
+                    if (indexFile) {
+                        link = relativePathToLink(indexFile.relativePath, false)
                     } else {
-                        // 没找到文件，尝试使用 index.md 或目录路径
-                        const indexFile = findIndexFile(node)
-                        link = indexFile
-                            ? relativePathToLink(indexFile.relativePath, false)
-                            : relativePathToLink(node.relativePath, true)
+                        // 如果没有找到，则查找第一个文件作为 link
+                        const firstFile = findFirstFile(node)
+                        if (firstFile) {
+                            link = relativePathToLink(firstFile.relativePath, false)
+                        } else {
+                            // 否则使用目录路径
+                            link = relativePathToLink(node.relativePath, true)
+                        }
                     }
                 } else {
                     // 目录本身没有子节点，尝试找 index.md 或使用目录路径
