@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { FileInfo } from './types'
-import { fileNameToTitle } from './utils'
 
 /**
  * 从 markdown 文件提取 frontmatter
@@ -53,7 +52,7 @@ export function extractTitle(filePath: string): string {
 
     // 最后使用文件名
     const fileName = path.basename(filePath, path.extname(filePath))
-    return fileNameToTitle(fileName)
+    return fileName
 }
 
 /**

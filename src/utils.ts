@@ -65,23 +65,9 @@ export function shouldInclude(filePath: string, include: string[], exclude: stri
 }
 
 /**
- * 从文件名中提取排序前缀（如 01-、02- 等）
- */
-export function extractSortPrefix(name: string): number | null {
-    const match = name.match(/^(\d+)[-_.\s]/)
-    return match ? parseInt(match[1], 10) : null
-}
-
-/**
- * 自然排序比较函数
- */
-function naturalCompare(a: string, b: string): number {
-    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
-}
-
-/**
  * 移除文件名中的排序前缀，返回纯标题部分
  * 支持的前缀格式包括：
+ * - 数字 + 标题
  * - 数字 + . 后 + 标题
  * - 数字 + 多个空格 + 标题
  * - 数字 + 、后 + 标题
@@ -95,23 +81,4 @@ export function removeSortPrefix(name: string): string {
     const prefixRegex = /^\d+\s*[._\-\s、]*/
     const result = name.replace(prefixRegex, '').trim()
     return result
-}
-
-/**
- * 将文件名转换为标题（移除前缀，首字母大写等）
- */
-export function fileNameToTitle(fileName: string): string {
-    // 移除扩展名
-    let name = fileName.replace(/\.[^.]+$/, '')
-
-    // 移除排序前缀
-    name = removeSortPrefix(name)
-
-    // 替换连字符和下划线为空格
-    name = name.replace(/[-_]/g, ' ')
-
-    // 首字母大写
-    name = name.charAt(0).toUpperCase() + name.slice(1)
-
-    return name
 }

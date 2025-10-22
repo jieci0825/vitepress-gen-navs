@@ -1,6 +1,7 @@
 import { FileTreeNode, NavItem, NormalizedGenNavsOptions, DirInfo } from './types'
 import { extractTitle } from './extractor'
 import { relativePathToLink } from './scanner'
+import { removeSortPrefix } from './utils'
 
 /**
  * 生成 Nav 配置
@@ -12,7 +13,7 @@ export function generateNav(tree: FileTreeNode[], options: NormalizedGenNavsOpti
     const onFile = navConfig.onFile || options.onFile
 
     // 从第一层开始递归构建
-    return buildNavItems(tree, 0, maxDepth, onDirectory, onFile, options.excludeRootIndex)
+    return buildNavItems(tree, 0, maxDepth, onDirectory, onFile, options.excludeRootIndex, options.formatSortPrefix)
 }
 
 /**
@@ -55,7 +56,8 @@ function buildNavItems(
     maxDepth: number | undefined,
     onDirectory: ((info: DirInfo) => string | null) | undefined,
     onFile: ((info: any) => string | null) | undefined,
-    excludeRootIndex: boolean
+    excludeRootIndex: boolean,
+    formatSortPrefix: boolean
 ): NavItem[] {
     // 检查深度限制
     if (maxDepth !== undefined && currentDepth >= maxDepth) {
@@ -82,10 +84,23 @@ function buildNavItems(
                 }
             }
 
+            // 格式化排序前缀
+            if (formatSortPrefix) {
+                text = removeSortPrefix(text)
+            }
+
             // 递归处理子节点
             const childItems =
                 node.children && node.children.length > 0
-                    ? buildNavItems(node.children, currentDepth + 1, maxDepth, onDirectory, onFile, excludeRootIndex)
+                    ? buildNavItems(
+                          node.children,
+                          currentDepth + 1,
+                          maxDepth,
+                          onDirectory,
+                          onFile,
+                          excludeRootIndex,
+                          formatSortPrefix
+                      )
                     : []
 
             // 如果有子节点，使用 items 创建下拉菜单；否则使用 link
@@ -141,6 +156,11 @@ function buildNavItems(
                 if (customText !== null) {
                     text = customText
                 }
+            }
+
+            // 格式化排序前缀
+            if (formatSortPrefix) {
+                text = removeSortPrefix(text)
             }
 
             // 直接使用 relativePath

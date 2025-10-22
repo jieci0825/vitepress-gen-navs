@@ -1,6 +1,7 @@
 import { FileTreeNode, SidebarItem, NormalizedGenNavsOptions, DirInfo, SidebarConfig_VP, NavItem } from './types'
 import { extractTitle } from './extractor'
 import { relativePathToLink } from './scanner'
+import { removeSortPrefix } from './utils'
 
 /**
  * 生成 Sidebar 配置，基于 nav 结构
@@ -132,6 +133,11 @@ function generateSidebarItems(
                 }
             }
 
+            // 格式化排序前缀
+            if (options.formatSortPrefix) {
+                text = removeSortPrefix(text)
+            }
+
             // 递归处理子节点
             const childItems = node.children ? generateSidebarItems(node.children, options, currentDepth + 1) : []
 
@@ -152,6 +158,11 @@ function generateSidebarItems(
                 if (customText !== null) {
                     text = customText
                 }
+            }
+
+            // 格式化排序前缀
+            if (options.formatSortPrefix) {
+                text = removeSortPrefix(text)
             }
 
             // 直接使用 relativePath

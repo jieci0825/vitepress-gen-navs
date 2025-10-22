@@ -31,11 +31,6 @@ export interface FileInfo {
 }
 
 /**
- * 排序类型
- */
-export type SortType = 'asc' | 'desc' | ((a: any, b: any) => number)
-
-/**
  * Nav/Sidebar 特定配置
  */
 export interface NavSidebarConfig {
@@ -83,11 +78,11 @@ export interface GenNavsOptions {
     /** 全局文件回调（nav/sidebar 未配置时的默认值） */
     onFile?: (info: FileInfo) => string
 
-    /** 排序规则 */
-    sort?: SortType
-
     /** 是否在 nav 中排除根目录的 index.md */
     excludeRootIndex?: boolean
+
+    /** 是否格式化排序前缀（移除文件名中的排序前缀），默认 true */
+    formatSortPrefix?: boolean
 }
 
 /**
@@ -115,11 +110,11 @@ export interface NormalizedGenNavsOptions {
     /** 全局文件回调（nav/sidebar 未配置时的默认值） */
     onFile?: (info: FileInfo) => string
 
-    /** 排序规则 */
-    sort: SortType
-
     /** 是否在 nav 中排除根目录的 index.md */
     excludeRootIndex: boolean
+
+    /** 是否格式化排序前缀（移除文件名中的排序前缀） */
+    formatSortPrefix: boolean
 }
 
 /**

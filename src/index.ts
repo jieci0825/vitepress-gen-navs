@@ -19,8 +19,8 @@ const DEFAULT_OPTIONS: NormalizedGenNavsOptions = {
     },
     onDirectory: undefined,
     onFile: undefined,
-    sort: 'asc',
-    excludeRootIndex: true
+    excludeRootIndex: true,
+    formatSortPrefix: true
 }
 
 /**
