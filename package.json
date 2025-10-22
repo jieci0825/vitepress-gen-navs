@@ -1,6 +1,6 @@
 {
     "name": "vitepress-gen-navs",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "用于生成 vitepress 中的 nav 和 sidebar 配置",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -23,7 +23,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/coderjc/vitepress-gen-navs.git"
+        "url": "https://github.com/jieci0825/vitepress-gen-navs.git"
     },
     "dependencies": {
         "fast-glob": "^3.3.2",
