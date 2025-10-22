@@ -190,6 +190,7 @@ export type FileTreeNodeType = 'file' | 'directory'
 export interface FileTreeNode {
     type: FileTreeNodeType
     name: string
+    originalName: string
     path: string
     relativePath: string
     depth: number

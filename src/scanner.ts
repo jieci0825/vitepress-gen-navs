@@ -75,6 +75,7 @@ export function buildFileTree(
                 const dirNode: FileTreeNode = {
                     type: 'directory',
                     name: parts[i],
+                    originalName: parts[i],
                     path: fullDirPath,
                     relativePath: relativeToRoot,
                     depth: i,
@@ -97,6 +98,7 @@ export function buildFileTree(
         const fileNode: FileTreeNode = {
             type: 'file',
             name: fileName,
+            originalName: fileName,
             path: file,
             relativePath: relativeToRoot,
             depth,
@@ -132,6 +134,8 @@ export function buildFileTree(
             }
         }
     })
+
+    // TODO 排序
 
     return tree
 }

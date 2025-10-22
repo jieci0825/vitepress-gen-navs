@@ -1,5 +1,4 @@
 import { FileTreeNode, SidebarItem, NormalizedGenNavsOptions, DirInfo, SidebarConfig_VP, NavItem } from './types'
-import { sortItems } from './utils'
 import { extractTitle } from './extractor'
 import { relativePathToLink } from './scanner'
 
@@ -115,10 +114,7 @@ function generateSidebarItems(
 
     const items: SidebarItem[] = []
 
-    // 排序节点
-    const sortedNodes = sortItems(nodes, options.sort, node => node.name)
-
-    for (const node of sortedNodes) {
+    for (const node of nodes) {
         if (node.type === 'directory') {
             const dirInfo: DirInfo = {
                 name: node.name,

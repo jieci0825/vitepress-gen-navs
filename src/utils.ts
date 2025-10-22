@@ -1,6 +1,5 @@
 import path from 'node:path'
 import { minimatch } from 'minimatch'
-import { SortType } from './types'
 
 /**
  * 标准化路径（统一为 POSIX 格式）
@@ -81,50 +80,21 @@ function naturalCompare(a: string, b: string): number {
 }
 
 /**
- * 排序项目
- * @param items 要排序的项目
- * @param sort 排序规则
- * @param getName 获取名称的函数
- */
-export function sortItems<T>(items: T[], sort?: SortType, getName?: (item: T) => string): T[] {
-    if (!sort) {
-        return items
-    }
-
-    const getNameFn = getName || ((item: any) => item.name || '')
-
-    const sorted = [...items]
-
-    if (typeof sort === 'function') {
-        sorted.sort(sort)
-    } else {
-        sorted.sort((a, b) => {
-            const nameA = getNameFn(a)
-            const nameB = getNameFn(b)
-
-            // 尝试提取数字前缀
-            const prefixA = extractSortPrefix(nameA)
-            const prefixB = extractSortPrefix(nameB)
-
-            // 如果都有数字前缀，按前缀排序
-            if (prefixA !== null && prefixB !== null) {
-                return sort === 'asc' ? prefixA - prefixB : prefixB - prefixA
-            }
-
-            // 否则自然排序
-            const result = naturalCompare(nameA, nameB)
-            return sort === 'asc' ? result : -result
-        })
-    }
-
-    return sorted
-}
-
-/**
- * 移除文件名中的排序前缀
+ * 移除文件名中的排序前缀，返回纯标题部分
+ * 支持的前缀格式包括：
+ * - 数字 + . 后 + 标题
+ * - 数字 + 多个空格 + 标题
+ * - 数字 + 、后 + 标题
+ * - 数字 + -后 + 标题
+ * - 数字 + _后 + 标题
+ *
+ * @param name 输入的可能带有排序前缀的文件名或字符串
+ * @returns 移除前缀后的标题部分
  */
 export function removeSortPrefix(name: string): string {
-    return name.replace(/^\d+[-_.\s]+/, '')
+    const prefixRegex = /^\d+\s*[._\-\s、]*/
+    const result = name.replace(prefixRegex, '').trim()
+    return result
 }
 
 /**

@@ -1,5 +1,4 @@
-import { FileTreeNode, NavItem, NormalizedGenNavsOptions, DirInfo, SortType } from './types'
-import { sortItems } from './utils'
+import { FileTreeNode, NavItem, NormalizedGenNavsOptions, DirInfo } from './types'
 import { extractTitle } from './extractor'
 import { relativePathToLink } from './scanner'
 
@@ -13,7 +12,7 @@ export function generateNav(tree: FileTreeNode[], options: NormalizedGenNavsOpti
     const onFile = navConfig.onFile || options.onFile
 
     // 从第一层开始递归构建
-    return buildNavItems(tree, 0, maxDepth, onDirectory, onFile, options.sort, options.excludeRootIndex)
+    return buildNavItems(tree, 0, maxDepth, onDirectory, onFile, options.excludeRootIndex)
 }
 
 /**
@@ -56,7 +55,6 @@ function buildNavItems(
     maxDepth: number | undefined,
     onDirectory: ((info: DirInfo) => string | null) | undefined,
     onFile: ((info: any) => string | null) | undefined,
-    sort: SortType | undefined,
     excludeRootIndex: boolean
 ): NavItem[] {
     // 检查深度限制
@@ -64,12 +62,9 @@ function buildNavItems(
         return []
     }
 
-    // 排序
-    const sortedNodes = sortItems(nodes, sort, node => node.name)
-
     const navItems: NavItem[] = []
 
-    for (const node of sortedNodes) {
+    for (const node of nodes) {
         if (node.type === 'directory') {
             const dirInfo: DirInfo = {
                 name: node.name,
@@ -90,15 +85,7 @@ function buildNavItems(
             // 递归处理子节点
             const childItems =
                 node.children && node.children.length > 0
-                    ? buildNavItems(
-                          node.children,
-                          currentDepth + 1,
-                          maxDepth,
-                          onDirectory,
-                          onFile,
-                          sort,
-                          excludeRootIndex
-                      )
+                    ? buildNavItems(node.children, currentDepth + 1, maxDepth, onDirectory, onFile, excludeRootIndex)
                     : []
 
             // 如果有子节点，使用 items 创建下拉菜单；否则使用 link
