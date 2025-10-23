@@ -32,23 +32,16 @@ export function scanDirectory(options: NormalizedGenNavsOptions): FileTreeNode[]
         return shouldInclude(relativePath, options.include, options.exclude)
     })
 
-    // 构建文件树，传入工作目录作为 relativePath 的基准
-    return buildFileTree(filteredFiles, baseDir, cwd, options.addDirPrefix)
+    // 构建文件树
+    return buildFileTree(filteredFiles, baseDir)
 }
 
 /**
  * 构建文件树结构
  * @param files 文件列表（绝对路径）
  * @param baseDir 扫描的基础目录（绝对路径）
- * @param rootDir relativePath 的基准目录（绝对路径），用于计算最终的相对路径
- * @param addDirPrefix 路径是否需要添加扫描目录前缀
  */
-export function buildFileTree(
-    files: string[],
-    baseDir: string,
-    rootDir: string = baseDir,
-    addDirPrefix: boolean = true
-): FileTreeNode[] {
+export function buildFileTree(files: string[], baseDir: string): FileTreeNode[] {
     const tree: FileTreeNode[] = []
     const dirMap = new Map<string, FileTreeNode>()
 
@@ -65,11 +58,7 @@ export function buildFileTree(
         for (let i = 0; i < parts.length - 1; i++) {
             const dirPath = parts.slice(0, i + 1).join(path.sep)
             const fullDirPath = path.join(baseDir, dirPath)
-
-            // 根据 addDirPrefix 决定相对路径的计算基准
-            // addDirPrefix=true: 相对于 rootDir (如 docs/guide)
-            // addDirPrefix=false: 相对于 baseDir (如 guide)
-            const relativeToRoot = normalizePath(path.relative(addDirPrefix ? rootDir : baseDir, fullDirPath))
+            const relativeToRoot = normalizePath(path.relative(baseDir, fullDirPath))
 
             if (!dirMap.has(dirPath)) {
                 const dirNode: FileTreeNode = {
@@ -89,8 +78,7 @@ export function buildFileTree(
     // 添加文件节点
     files.forEach(file => {
         const relativeToBase = path.relative(baseDir, file)
-        // 根据 addDirPrefix 决定相对路径的计算基准
-        const relativeToRoot = normalizePath(path.relative(addDirPrefix ? rootDir : baseDir, file))
+        const relativeToRoot = normalizePath(path.relative(baseDir, file))
         const parts = relativeToBase.split(path.sep)
         const depth = parts.length - 1
         const fileName = parts[parts.length - 1]

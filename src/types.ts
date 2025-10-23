@@ -60,8 +60,6 @@ export interface SidebarConfig extends Omit<NavSidebarConfig, 'depth'> {
 export interface GenNavsOptions {
     /** 扫描目录，默认当前目录 */
     dir?: string
-    /** 是否需要添加扫描目录前缀，默认 true */
-    addDirPrefix?: boolean
     /** 全局包含规则 */
     include?: string[]
     /** 全局排除规则 */
@@ -92,8 +90,6 @@ export interface GenNavsOptions {
 export interface NormalizedGenNavsOptions {
     /** 扫描目录 */
     dir: string
-    /** 是否需要添加扫描目录前缀 */
-    addDirPrefix: boolean
     /** 全局包含规则 */
     include: string[]
     /** 全局排除规则 */

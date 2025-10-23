@@ -21,20 +21,18 @@ npm install vitepress-gen-navs
 ## 快速开始
 通常来说，只需要配置一下 dir 即可，其余的保持默认配置即可正常使用。如果有特殊的配置需求，可以翻阅后续的文档。
 
-我建议文档都放在一个目录中，便于管理，通常是 docs 或者 document。当然，此时通常你需要额外配置一下 vitepress 的 **srcDir** 配置。
+我建议文档都放在一个目录中，便于管理，通常是 docs 或者 document。同时需要配置一下 vitepress 的 **srcDir** 选项，使其与 `dir` 保持一致。
 
 ```js
 import { genNavs } from 'vitepress-gen-navs'
 
 const { nav, sidebar } = genNavs({
-    dir: './docs',
-  	// 设置了 dir 而没有设置 vitepress 的 srcDir 配置项时，你通常需要开启 addDirPrefix
-  	// addDirPrefix: true
+    dir: './docs'
 })
 
 export default {
     // https://vitepress.dev/zh/reference/site-config#srcdir
-    srcDir: "./docs", // 如果没有设置此配置，则需要开启 addDirPrefix
+    srcDir: "./docs", // 建议与 dir 保持一致
     themeConfig: {
         nav,
         sidebar
@@ -53,7 +51,6 @@ export default {
 | 属性名 | 描述 | 类型 | 是否必填 | 默认值 |
 |--------|------|------|----------|--------|
 | `dir` | 扫描目录 | `string` | 否 | 当前目录 |
-| `addDirPrefix` | 是否需要添加扫描目录前缀 | `boolean` | 否 | `false` |
 | `include` | 全局包含规则 | `string[]` | 否 | `['**/node_modules/**', '**/.git/**']` |
 | `exclude` | 全局排除规则 | `string[]` | 否 | - |
 | `nav` | nav 特定配置 | `NavSidebarConfig` | 否 | - |
